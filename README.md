@@ -1,4 +1,4 @@
-# flutter_learn_2020_4_9
+# flutter-magic
 
 A new Flutter project.
 
