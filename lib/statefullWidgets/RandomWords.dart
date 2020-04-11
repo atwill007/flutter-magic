@@ -33,6 +33,11 @@ class RandomWordsState extends State<RandomWords> {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text('Startup Name Generator'),
+        // 提示: 某些widget属性需要单个widget（child），而其它一些属性，如action，需要一组widgets(children），用方括号[]表示。
+        // 为AppBar添加一个列表图标。当用户点击列表图标时，包含收藏夹的新路由页面入栈显示
+        actions: <Widget>[
+          new IconButton(icon: new Icon(Icons.list), onPressed: _pushSaved),
+        ],
       ),
       body: _buildSuggestions(),
     );
@@ -92,6 +97,46 @@ class RandomWordsState extends State<RandomWords> {
           }
         });
       }
+    );
+  }
+
+  /**
+   * Tips: 在Flutter中，导航器管理应用程序的路由栈。将路由推入（push）到导航器的栈中，将会显示更新为该路由页面。 从导航器的栈中弹出（pop）路由，将显示返回到前一个路由。
+   * 当用户点击导航栏中的列表图标时，建立一个路由并将其推入到导航管理器栈中。此操作会切换页面以显示新路由
+   * 新页面的内容在在MaterialPageRoute的builder属性中构建，builder是一个匿名函数。
+   * 添加Navigator.push调用，这会使路由入栈（以后路由入栈均指推入到导航管理器的栈）
+   */
+  void _pushSaved () {
+    Navigator.of(context).push(
+      // 添加MaterialPageRoute及其builder
+      new MaterialPageRoute(
+        // builder返回一个Scaffold，其中包含名为“Saved Suggestions”的新路由的应用栏。 新路由的body由包含ListTiles行的ListView组成; 每行之间通过一个分隔线分隔
+        builder: (context) {
+          final tiles = _saved.map(
+            (pair) {
+              return new ListTile(
+                title: new Text(
+                  pair.asPascalCase,
+                  style: _biggerFont,
+                ),
+              );
+            },
+          );
+          // ListTile的divideTiles()方法在每个ListTile之间添加1像素的分割线。
+          // 该 divided 变量持有最终的列表项。
+          final divided = ListTile.divideTiles(
+            context: context,
+            tiles: tiles,
+          ).toList();
+
+          return new Scaffold(
+            appBar: new AppBar(
+              title: new Text('Saved Suggesitons'),
+            ),
+            body: new ListView(children: divided),
+          );
+        },
+      ),
     );
   }
 }
