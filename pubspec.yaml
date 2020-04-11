@@ -1,4 +1,4 @@
-name: flutter_learn_2020_4_9
+name: flutter_learn
 description: A new Flutter project.
 
 # The following defines the version and build number for your application.
@@ -27,6 +27,9 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  cupertino_icons: ^0.1.0
+  english_words: ^3.1.0
 
 
 # For information on the generic Dart part of this file, see the
