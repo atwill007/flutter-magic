@@ -15,8 +15,16 @@ class RandomWords extends StatefulWidget {
 // 状态类
 class RandomWordsState extends State<RandomWords> {
   // 在Dart语言中使用下划线前缀标识符，会强制其变成私有的
-  final _suggestions = <WordPair>[]; // 保存建议的单词对 列表
-  final _biggerFont = const TextStyle(fontSize: 18.0); // 增大字体大小
+
+  // 保存建议的单词对 列表
+  final _suggestions = <WordPair>[];
+
+  // 添加Set(集合) 集合存储用户喜欢（收藏）的单词对
+  // 在这里，Set比List更合适，因为Set中不允许重复的值
+  final _saved = new Set<WordPair>();
+
+  // 增大字体大小
+  final _biggerFont = const TextStyle(fontSize: 18.0);
 
   @override
   Widget build (BuildContext context) { // 基本的build方法
@@ -54,18 +62,36 @@ class RandomWordsState extends State<RandomWords> {
           _suggestions.addAll(generateWordPairs().take(10));
         }
 
-        return _buildRow(_suggestions[index]);
+        return _buildRow(index + 1, _suggestions[index]);
       }
     );
   }
 
   // 在ListTile中显示每个新词对
-  Widget _buildRow (WordPair pair) {
+  Widget _buildRow (num idx, WordPair pair) {
+    final alreadySaved = _saved.contains(pair); // 检查单词对有没有添加到收藏夹中
+
     return new ListTile(
       title: new Text(
-        pair.asPascalCase,
+        idx.toString() + ' - ' + pair.asPascalCase,
         style: _biggerFont,
       ),
+      // 添加一个心形 ❤️ 图标到 ListTiles以启用收藏功能
+      trailing: new Icon(
+        alreadySaved ? Icons.favorite : Icons.favorite_border,
+        color: alreadySaved ? Colors.red : null,
+      ),
+      // 添加点击交互，让row可以进行点击并触发心形❤️图标的切换
+      onTap: () {
+        // 提示: 在Flutter的响应式风格的框架中，调用setState() 会为State对象触发build()方法，从而导致对UI的更新
+        setState(() {
+          if (alreadySaved) {
+            _saved.remove(pair);
+          } else {
+            _saved.add(pair);
+          }
+        });
+      }
     );
   }
 }
